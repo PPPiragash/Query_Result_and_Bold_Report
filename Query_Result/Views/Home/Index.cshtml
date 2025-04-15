@@ -1,0 +1,214 @@
+﻿@{
+    ViewData["Title"] = "Bold Reports Designer";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Bold Reports Designer</title>
+    <link rel="stylesheet" href="https://cdn.boldreports.com/embedded-reports/5.2.0/css/bold.reports.all.min.css" />
+
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            font-family: Arial, sans-serif;
+            overflow: hidden;
+        }
+
+        #reportDesigner {
+            height: 100vh;
+            width: 100vw;
+        }
+    </style>
+</head>
+<body>
+    <div id="reportDesigner"></div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.boldreports.com/embedded-reports/5.2.0/bold.report-designer.min.js"></script>
+    <script>
+
+        $(document).ready(function () {
+
+            $("#reportDesigner").boldReportDesigner({
+                serviceUrl: '/api/ReportDesigner',
+                reportType: "RDL",
+                create: function () {
+                    console.log("Report Designer created successfully.");
+
+                    $('#reportDesigner_group_distribution').hide();
+
+                    // Hide group header (the expand/collapse header for that group)
+                    $('#reportDesigner_groupHeader_distribution').hide();
+
+                    const hideDataTabHeader = setInterval(() => {
+                        const $dataTabHeader = $('#reportDesigner_dataTabHeader');
+
+                        if ($dataTabHeader.length) {
+                            $dataTabHeader.hide();
+                            clearInterval(hideDataTabHeader);
+                            console.log("✅ dataTabHeader hidden");
+                        }
+                    }, 1);
+
+
+
+                    const hideDsFooter = setInterval(() => {
+                        const $footer = $('#reportDesigner_dsFooterContainer');
+
+                        if ($footer.length) {
+                            $footer.hide();
+                            clearInterval(hideDsFooter);
+                            console.log("✅ reportDesigner_dsFooterContainer hidden.");
+                        }
+                    }, 1);
+
+
+                    const hideDatasetFooter = setInterval(() => {
+                        const $datasetFooter = $('#reportDesigner_datasetFooterContainer');
+
+                        if ($datasetFooter.length) {
+                            $datasetFooter.hide();
+                            clearInterval(hideDatasetFooter);
+                            console.log("✅ reportDesigner_datasetFooterContainer hidden.");
+                        }
+                    }, 1);
+
+
+
+
+                    const hideDsConfigHeader = setInterval(() => {
+                        const $dsHeader = $('#reportDesigner_dsConfigHeaderContainer');
+
+                        if ($dsHeader.length) {
+                            $dsHeader.hide();
+                            clearInterval(hideDsConfigHeader);
+                            console.log("✅ dsConfigHeaderContainer hidden.");
+                        }
+                    }, 1);
+
+                    const hideDsConfigBody = setInterval(() => {
+                        const $dsBody = $('#reportDesigner_dsConfig_BodyContainer');
+
+                        if ($dsBody.length) {
+                            $dsBody.hide();
+                            clearInterval(hideDsConfigBody);
+                            console.log("✅ dsConfig_BodyContainer hidden.");
+                        }
+                    }, 1);
+
+
+                    const hideDsConfigFooter = setInterval(() => {
+                        const $dsFooter = $('#reportDesigner_dsConfigFooterContainer');
+
+                        if ($dsFooter.length) {
+                            $dsFooter.hide();
+                            clearInterval(hideDsConfigFooter);
+                            console.log("✅ dsConfigFooterContainer hidden.");
+                        }
+                    }, 1);
+
+
+
+
+
+
+
+                },
+                reportOpened: function () {
+                    console.log("Report opened successfully.");
+                },
+                reportSaved: function () {
+                    console.log("Report saved successfully.");
+                },
+                ajaxBeforeLoad: function (args) {
+                    console.log("Ajax Request Triggered: ", args);
+                }
+            });
+
+            // Fetch external WebAPI URL dynamically
+            const apiUrl = "/query/GetCleanQueryResults";
+
+            const hideDataSources = [
+                'e-sql', 'e-azuresqldw', 'e-odbc', 'e-oledb',
+                'e-shared', 'e-amazon-rds', 'e-webapi', 'e-odata', 'e-xml'
+            ];
+
+            hideDataSources.forEach(type => {
+                $('.e-reportdesigner-datasourceTypes[itemtype="' + type + '"]').hide();
+            });
+
+            $(document).ready(function () {
+                // When the reportDesigner_Dataset element is clicked
+                $('#reportDesigner_Dataset').on('click', function () {
+                    console.log("Dataset clicked");
+
+                    // Hide the reportDesigner_tabHeaderContainer element
+                    $('#reportDesigner_tabHeaderContainer').hide();
+
+                    // Auto-click the newDataSourceButton
+                    $('#reportDesigner_newDataSourceButton').trigger('click');
+
+                    // Wait a bit to ensure that the new data source options are rendered
+                    setTimeout(function () {
+                        // Auto-click the WebAPI data source option
+                        $('.e-reportdesigner-datasourceTypes[itemtype="e-json"]').trigger('click');
+                    }, 500);  // Adjust the delay if necessary
+                });
+            });
+
+
+
+            // WebAPI datasource click
+            $(document).on('click', '.e-reportdesigner-datasourceTypes[itemtype="e-json"]', function () {
+                setTimeout(() => {
+                    // Set WebAPI URL dynamically
+                    $('#reportDesigner_json_type').val('External');
+                    $('#reportDesigner_json_url').val(apiUrl);
+
+                    console.log("WebAPI token row added successfully.");
+
+                    // Fetch the data and populate the textarea with JSON data
+                    $.get(apiUrl, function (data) {
+                        // Assuming `data` is in JSON format, populate the textarea
+                        $('#reportDesigner_json_conStr').val(JSON.stringify(data, null, 4));
+                        console.log("WebAPI data populated in the textarea");
+
+                        // Auto-click the Save button to connect
+                        setTimeout(() => {
+                            $('#reportDesigner_btn_connect').trigger('click');
+                        }, 300);
+                    }).fail(function (xhr, status, error) {
+                        console.error('API call failed:', error);
+                    });
+                }, 300);
+            });
+
+            // Button click event to fetch data sources
+            $('#reportDesigner_Dataset').on('click', function () {
+                console.log('Button clicked');
+
+                $.get(apiUrl, function (data) {
+                    console.log("Data Sources: ", data);
+                }).fail(function (xhr, status, error) {
+                    console.error('API call failed:', error);
+                });
+            });
+
+            // Handle Dataset click and hide tab headers
+            $(document).ready(function () {
+                $('#reportDesigner_Dataset').on('click', function () {
+                    console.log("Dataset clicked");
+
+                    // Hide the reportDesigner_tabHeaderContainer element
+                    $('#reportDesigner_tabHeaderContainer').hide();
+                });
+            });
+        });
+    </script>
+
+</body>
+</html>

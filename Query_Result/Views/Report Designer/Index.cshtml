@@ -1,0 +1,62 @@
+﻿@* <!DOCTYPE html> *@
+@* <html> *@
+@* <head> *@
+@*     <title>Bold Reports - Report Designer</title> *@
+@*     <link href="https://cdn.boldreports.com/8.1.1/content/v2.0/tailwind-light/bold.report-designer.min.css" rel="stylesheet" /> *@
+@* </head> *@
+@* <body> *@
+@*     <div id="report-designer-container"> *@
+@*         <bold-report-designer id="reportdesigner" *@
+@*                               service-url="/api/ReportDesigner"> *@
+@*         </bold-report-designer> *@
+@*     </div> *@
+
+   
+
+@*     <script src="https://cdn.boldreports.com/embedded-reports/5.2.0/bold.report-designer.min.js"></script> *@
+@*     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> *@
+@*     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script> *@
+@*     <script src="https://cdn.boldreports.com/8.1.1/scripts/v2.0/common/bold.reports.common.min.js"></script> *@
+@*     <script src="https://cdn.boldreports.com/8.1.1/scripts/v2.0/common/bold.reports.widgets.min.js"></script> *@
+@*     <script src="https://cdn.boldreports.com/8.1.1/scripts/v2.0/bold.report-designer.min.js"></script> *@
+
+@*     <script> *@
+@*                     $(document).ready(function () { *@
+@*             $("#reportDesigner").boldReportDesigner({ *@
+@*                 serviceUrl: '/api/ReportDesigner/PostReportAction', *@
+@*                 reportType: "RDL", *@
+@*                 create: function () { *@
+@*                     console.log("Report Designer created successfully."); *@
+@*                 }, *@
+@*                 reportOpened: function () { *@
+@*                     console.log("Report opened successfully."); *@
+@*                 }, *@
+@*                 reportSaved: function () { *@
+@*                     console.log("Report saved successfully."); *@
+@*                 }, *@
+@*                 ajaxBeforeLoad: function (args) { *@
+@*                     if (args.data) { *@
+@*                         // Ensure 'designerAction' key is included *@
+@*                         if (!args.data.designerAction) { *@
+@*                             args.data.designerAction = args.action || "save"; // Default action can be "save" or anything based on the operation *@
+@*                         } *@
+@*                         if (args.action) { *@
+@*                             args.data.designerAction = args.action; *@
+@*                         } *@
+@*                         if (args.data.action === "save") { *@
+@*                             args.data.reportFile = null; *@
+@*                         } *@
+@*                     } *@
+
+@*                     console.log("Ajax Request Triggered: ", args); *@
+@*                 } *@
+@*             }); *@
+@*         }); *@
+
+
+@*     </script> *@
+
+
+    
+@* </body> *@
+@* </html> *@
